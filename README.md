@@ -12,3 +12,12 @@ We can kill two birds with one stone:
 - Online marketplace
 - Public good: No marketplace fee ever, no admins.
 - Fully onchain orderbook
+
+## Goals
+
+- Sell NFT: less than 100k gas **done**
+- Buy NFT: less than 100k gas **done**
+
+## Properties
+
+- No admin key and no governance

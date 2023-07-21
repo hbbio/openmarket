@@ -110,7 +110,10 @@ contract OpenMarket {
         string memory text = "[";
         bool start = true;
         for (uint256 i = 0; i < supply; i++) {
-            if (tokenPrice[i] > 0) {
+            if (
+                tokenPrice[i] > 0 &&
+                _tokenSeller[i] == _existingCollection.ownerOf(i)
+            ) {
                 if (!start) {
                     text = string.concat(text, ",");
                 }

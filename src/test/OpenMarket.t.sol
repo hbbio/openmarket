@@ -15,6 +15,10 @@ contract Azuki is ERC721A {
         // `_mint`'s second argument now takes in a `quantity`, not a `tokenId`.
         _mint(msg.sender, quantity);
     }
+
+    function approveAll(address _spender) external {
+        setApprovalForAll(_spender, true);
+    }
 }
 
 contract User {
@@ -36,6 +40,10 @@ contract User {
 
     function buy(uint256 _id) public {
         market.buyNFT(_id);
+    }
+
+    function approveAll() public {
+        coll.approveAll(address(market));
     }
 }
 
@@ -61,7 +69,8 @@ contract OpenMarketTest is DSTest {
         emit log_named_address("user1", address(user1));
         user1.mint();
         user1.mint();
-        // @todo should fail without approval
+        user1.approveAll();
+        // @todo test fails without approval
         user1.sell(0, 1000);
         user1.sell(1, 3000);
         assertEq(con.count(), 2);

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL
 pragma solidity 0.8.19;
 
 // import "@openzeppelin/contracts/access/Ownable.sol";
@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 // is Ownable?
-contract NFTMarketplace {
+contract OpenMarket {
     uint256 public count;
     mapping(uint256 => uint256) public tokenPrice;
     mapping(uint256 => address) private _tokenSeller;

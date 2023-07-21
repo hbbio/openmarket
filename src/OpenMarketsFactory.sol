@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL
 pragma solidity 0.8.19;
 
 // import "@openzeppelin/contracts/access/Ownable.sol";
@@ -23,7 +23,7 @@ contract NFTMarketplaceFactory {
             "Marketplace already exists"
         );
 
-        NFTMarketplace marketplace = new NFTMarketplace(collection);
+        OpenMarket marketplace = new OpenMarket(collection);
         _collectionToMarketplace[collection] = address(marketplace);
         _marketplaces.push(address(marketplace));
 

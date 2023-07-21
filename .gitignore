@@ -1,0 +1,7 @@
+cache/
+out/
+doc/grant.pdf
+.vscode/targets.log
+.vscode/dryrun.log
+.vscode/configurationCache.log
+.DS_Store

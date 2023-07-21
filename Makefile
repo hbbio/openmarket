@@ -2,7 +2,7 @@ GOERLI_RPC="https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
 POLYGON_RPC="https://polygon.llamarpc.com"
 CONTRACT=OpenMarket
 
-.PHONY: deploy json install test deploynft
+.PHONY: deploy json install test deploy deploygoerli
 
 null:
     @:

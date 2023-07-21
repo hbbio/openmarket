@@ -30,6 +30,12 @@ contract User is ERC721A__IERC721Receiver {
         coll = _coll;
     }
 
+    // Contract can receive value.
+    receive() external payable {
+        // Code to handle the received Ether (optional)
+        // For example, you can log events or update contract state.
+    }
+
     function mint() public payable {
         coll.mint(1);
     }

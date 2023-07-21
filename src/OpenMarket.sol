@@ -89,7 +89,7 @@ contract OpenMarket {
         uint256 price = tokenPrice[tokenId];
         require(msg.value >= price, "Insufficient payment");
 
-        address seller = _existingCollection.ownerOf(tokenId);
+        address seller = _tokenSeller[tokenId];
         _existingCollection.safeTransferFrom(seller, msg.sender, tokenId);
 
         _setPrice(tokenId, 0, address(0));

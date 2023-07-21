@@ -5,9 +5,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 
-contract NFTMarketplace is Ownable, ERC721Holder {
+contract NFTMarketplace is Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
 

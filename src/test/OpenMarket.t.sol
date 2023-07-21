@@ -102,6 +102,14 @@ contract OpenMarketTest is DSTest {
         assertEq(string(con.getTokensOnSale()), "[0:1000,1:3000]");
     }
 
+    function testFailNoApproval() public {
+        OpenMarket con = new OpenMarket(address(coll));
+        User user1 = new User(con, coll);
+        emit log_named_address("user1", address(user1));
+        user1.mint();
+        user1.sell(0, 1000);
+    }
+
     function testListAndBuy() public {
         OpenMarket con = new OpenMarket(address(coll));
         User user1 = new User(con, coll);
@@ -113,5 +121,21 @@ contract OpenMarketTest is DSTest {
         assertEq(con.count(), 1);
         assertEq(address(user2).balance, 2000);
         user2.buy{value: 1000}(0);
+        // In test, users have unlimited balance...
+        // assertEq(address(user1).balance, 1000);
+        // assertEq(address(user2).balance, 1000);
+    }
+
+    function testFailValueTooLow() public {
+        OpenMarket con = new OpenMarket(address(coll));
+        User user1 = new User(con, coll);
+        User user2 = new User{value: 2000}(con, coll);
+        emit log_named_address("user1", address(user1));
+        user1.mint();
+        user1.approveAll();
+        user1.sell(0, 1000);
+        assertEq(con.count(), 1);
+        assertEq(address(user2).balance, 2000);
+        user2.buy{value: 100}(0);
     }
 }

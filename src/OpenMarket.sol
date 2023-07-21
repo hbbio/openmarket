@@ -33,17 +33,21 @@ contract OpenMarket {
         _existingCollection = IERC721Enumerable(existingCollection);
     }
 
-    // function mintNFT(string memory tokenURI, uint256 price) external onlyOwner {
-    //     uint256 tokenId = _tokenIdCounter.current();
-    //     _tokenIdCounter.increment();
-    //     _existingCollection.safeTransferFrom(
-    //         msg.sender,
-    //         address(this),
-    //         tokenId
-    //     );
-    //     _tokenPrice[tokenId] = price;
-    //     emit NFTListed(tokenId, price);
-    // }
+    // MODIFIERS
+
+    modifier approved(uint256 _id) {
+        require(
+            _existingCollection.getApproved(_id) == address(this) ||
+                _existingCollection.isApprovedForAll(
+                    _existingCollection.ownerOf(_id),
+                    address(this)
+                ),
+            "NFT not approved for sale"
+        );
+        _;
+    }
+
+    // FUNCTIONS
 
     function _setPrice(
         uint256 tokenId,
@@ -60,8 +64,10 @@ contract OpenMarket {
         _tokenSeller[tokenId] = seller;
     }
 
-    function setPrice(uint256 tokenId, uint256 price) external {
-        // require(_tokenPrice[tokenId] > 0, "NFT is not listed for sale");
+    function setPrice(
+        uint256 tokenId,
+        uint256 price
+    ) external approved(tokenId) {
         require(
             _existingCollection.ownerOf(tokenId) == msg.sender,
             "You are not the owner"
@@ -70,19 +76,11 @@ contract OpenMarket {
         emit NFTPriceUpdated(tokenId, msg.sender, price);
     }
 
-    function buyNFT(uint256 tokenId) external payable {
+    function buyNFT(uint256 tokenId) external payable approved(tokenId) {
         require(tokenPrice[tokenId] > 0, "NFT is not listed for sale");
         require(
             _existingCollection.ownerOf(tokenId) == _tokenSeller[tokenId],
             "NFT ownership changed"
-        );
-        require(
-            _existingCollection.getApproved(tokenId) == address(this) ||
-                _existingCollection.isApprovedForAll(
-                    _existingCollection.ownerOf(tokenId),
-                    address(this)
-                ),
-            "NFT not approved for sale"
         );
         require(msg.value >= tokenPrice[tokenId], "Insufficient payment");
 

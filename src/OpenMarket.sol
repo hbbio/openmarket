@@ -4,6 +4,7 @@ pragma solidity 0.8.19;
 // import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 // is Ownable?
 contract OpenMarket {
@@ -11,6 +12,9 @@ contract OpenMarket {
     mapping(uint256 => uint256) public tokenPrice;
     mapping(uint256 => address) private _tokenSeller;
     IERC721Enumerable private _existingCollection;
+
+    // enable .toString()
+    using Strings for uint256;
 
     event NFTListed(uint256 indexed tokenId, uint256 price);
     event NFTPriceUpdated(
@@ -101,12 +105,16 @@ contract OpenMarket {
     function getTokensOnSale() external view returns (string memory) {
         uint256 supply = _existingCollection.totalSupply();
         string memory text = "[";
+        bool start = true;
         for (uint256 i = 0; i < supply; i++) {
             if (tokenPrice[i] > 0) {
-                text = string.concat(
-                    text,
-                    string(abi.encode(i, ":", tokenPrice[i]))
-                );
+                if (!start) {
+                    text = string.concat(text, ",");
+                }
+                text = string.concat(text, i.toString());
+                text = string.concat(text, ":");
+                text = string.concat(text, tokenPrice[i].toString());
+                start = false;
             }
         }
         return string.concat(text, "]");

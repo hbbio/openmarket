@@ -17,22 +17,51 @@ contract Azuki is ERC721A {
     }
 }
 
+contract User {
+    OpenMarket market;
+    Azuki public coll;
+
+    constructor(OpenMarket _market, Azuki _coll) {
+        market = _market;
+        coll = _coll;
+    }
+
+    function mint() public payable {
+        coll.mint(1);
+    }
+
+    function sell(uint256 _id, uint256 _price) public {
+        market.setPrice(_id, _price);
+    }
+}
+
 contract OpenMarketTest is DSTest {
     Azuki coll;
 
-    // address user1;
+    User user1;
 
     function setUp() public {
         coll = new Azuki();
-        // user1 = address(new User(con));
-
         emit log_named_address("sender", msg.sender);
-        // emit log_named_address("user1", user1);
     }
 
-    function testCreateMarket() public {
+    function testCreateEmptyMarket() public {
         OpenMarket con = new OpenMarket(address(coll));
+        user1 = new User(con, coll);
+        emit log_named_address("user1", address(user1));
         assertEq(con.count(), 0);
         assertEq(string(con.getTokensOnSale()), "[]");
+    }
+
+    function testUserList() public {
+        OpenMarket con = new OpenMarket(address(coll));
+        user1 = new User(con, coll);
+        emit log_named_address("user1", address(user1));
+        user1.mint();
+        user1.mint();
+        user1.sell(0, 1000);
+        user1.sell(1, 3000);
+        assertEq(con.count(), 2);
+        assertEq(string(con.getTokensOnSale()), "[0:1000,1:3000]");
     }
 }

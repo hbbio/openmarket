@@ -17,7 +17,7 @@ contract Azuki is ERC721A {
     }
 }
 
-contract RecorderNFTTest is DSTest {
+contract OpenMarketTest is DSTest {
     Azuki coll;
 
     // address user1;
@@ -32,6 +32,7 @@ contract RecorderNFTTest is DSTest {
 
     function testCreateMarket() public {
         OpenMarket con = new OpenMarket(address(coll));
+        assertEq(con.count(), 0);
         assertEq(string(con.getTokensOnSale()), "[]");
     }
 }

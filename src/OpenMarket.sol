@@ -98,20 +98,17 @@ contract OpenMarket {
         return address(_existingCollection);
     }
 
-    function getTokensOnSale() external view returns (bytes memory) {
-        uint256[] memory tokenIds = new uint256[](count);
-        uint256[] memory prices = new uint256[](count);
+    function getTokensOnSale() external view returns (string memory) {
         uint256 supply = _existingCollection.totalSupply();
-        uint256 pos = 0;
+        string memory text = "[";
         for (uint256 i = 0; i < supply; i++) {
             if (tokenPrice[i] > 0) {
-                tokenIds[pos] = i;
-                prices[pos] = tokenPrice[i];
-                pos++;
+                text = string.concat(
+                    text,
+                    string(abi.encode(i, ":", tokenPrice[i]))
+                );
             }
         }
-        // Encode the tokenIds and prices into a JSON format
-        bytes memory jsonData = abi.encode(tokenIds, prices);
-        return jsonData;
+        return string.concat(text, "]");
     }
 }

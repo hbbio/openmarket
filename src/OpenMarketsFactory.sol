@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+// import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./OpenMarket.sol";
 
-contract NFTMarketplaceFactory is Ownable {
+// is Ownable
+contract NFTMarketplaceFactory {
     mapping(address => address) private _collectionToMarketplace;
     address[] private _marketplaces;
 
@@ -14,7 +15,8 @@ contract NFTMarketplaceFactory is Ownable {
         address indexed marketplace
     );
 
-    function createMarketplace(address collection) external onlyOwner {
+    // @todo onlyOwner?
+    function createMarketplace(address collection) external {
         require(collection != address(0), "Invalid collection address");
         require(
             _collectionToMarketplace[collection] == address(0),

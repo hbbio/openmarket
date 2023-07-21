@@ -33,12 +33,14 @@ contract User {
     function sell(uint256 _id, uint256 _price) public {
         market.setPrice(_id, _price);
     }
+
+    function buy(uint256 _id) public {
+        market.buyNFT(_id);
+    }
 }
 
 contract OpenMarketTest is DSTest {
     Azuki coll;
-
-    User user1;
 
     function setUp() public {
         coll = new Azuki();
@@ -47,7 +49,7 @@ contract OpenMarketTest is DSTest {
 
     function testCreateEmptyMarket() public {
         OpenMarket con = new OpenMarket(address(coll));
-        user1 = new User(con, coll);
+        User user1 = new User(con, coll);
         emit log_named_address("user1", address(user1));
         assertEq(con.count(), 0);
         assertEq(string(con.getTokensOnSale()), "[]");
@@ -55,13 +57,25 @@ contract OpenMarketTest is DSTest {
 
     function testUserList() public {
         OpenMarket con = new OpenMarket(address(coll));
-        user1 = new User(con, coll);
+        User user1 = new User(con, coll);
         emit log_named_address("user1", address(user1));
         user1.mint();
         user1.mint();
+        // @todo should fail without approval
         user1.sell(0, 1000);
         user1.sell(1, 3000);
         assertEq(con.count(), 2);
         assertEq(string(con.getTokensOnSale()), "[0:1000,1:3000]");
+    }
+
+    function testListAndBuy() public {
+        OpenMarket con = new OpenMarket(address(coll));
+        User user1 = new User(con, coll);
+        User user2 = new User(con, coll);
+        emit log_named_address("user1", address(user1));
+        user1.mint();
+        user1.sell(0, 1000);
+        assertEq(con.count(), 1);
+        user2.buy(0);
     }
 }

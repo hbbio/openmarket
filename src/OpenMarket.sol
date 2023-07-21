@@ -4,10 +4,10 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 
-contract NFTMarketplace is Ownable, IERC721Receiver, ERC721Holder {
+contract NFTMarketplace is Ownable, ERC721Holder {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
 
@@ -79,15 +79,5 @@ contract NFTMarketplace is Ownable, IERC721Receiver, ERC721Holder {
 
     function getExistingCollection() external view returns (address) {
         return address(_existingCollection);
-    }
-
-    // Implement the ERC721Receiver interface
-    function onERC721Received(
-        address,
-        address,
-        uint256,
-        bytes calldata
-    ) external pure override returns (bytes4) {
-        return this.onERC721Received.selector;
     }
 }

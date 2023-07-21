@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 
-contract NFTMarketplace is ERC721, Ownable {
+contract NFTMarketplace is Ownable, IERC721Receiver, ERC721Holder {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
 
     mapping(uint256 => uint256) private _tokenPrice;
-
-    address private _existingCollection;
+    IERC721Enumerable private _existingCollection;
 
     event NFTListed(uint256 indexed tokenId, uint256 price);
     event NFTPriceUpdated(uint256 indexed tokenId, uint256 price);
@@ -21,41 +23,54 @@ contract NFTMarketplace is ERC721, Ownable {
         uint256 price
     );
 
-    constructor(
-        string memory name,
-        string memory symbol,
-        address existingCollection
-    ) ERC721(name, symbol) {
-        _existingCollection = existingCollection;
+    constructor(address existingCollection) {
+        _existingCollection = IERC721Enumerable(existingCollection);
     }
 
     function mintNFT(string memory tokenURI, uint256 price) external onlyOwner {
         uint256 tokenId = _tokenIdCounter.current();
-        _mint(msg.sender, tokenId);
-        _setTokenURI(tokenId, tokenURI);
-        _tokenPrice[tokenId] = price;
         _tokenIdCounter.increment();
+        _existingCollection.safeTransferFrom(
+            msg.sender,
+            address(this),
+            tokenId
+        );
+        _tokenPrice[tokenId] = price;
         emit NFTListed(tokenId, price);
     }
 
     function setPrice(uint256 tokenId, uint256 price) external {
-        require(_exists(tokenId), "Token does not exist");
-        require(ownerOf(tokenId) == msg.sender, "You are not the owner");
+        require(_tokenPrice[tokenId] > 0, "NFT is not listed for sale");
+        require(
+            _existingCollection.ownerOf(tokenId) == msg.sender,
+            "You are not the owner"
+        );
         _tokenPrice[tokenId] = price;
         emit NFTPriceUpdated(tokenId, price);
     }
 
     function buyNFT(uint256 tokenId) external payable {
-        require(_exists(tokenId), "Token does not exist");
         require(_tokenPrice[tokenId] > 0, "NFT is not listed for sale");
         require(
-            _isApprovedOrOwner(msg.sender, tokenId),
+            _existingCollection.ownerOf(tokenId) != address(this),
+            "NFT is not listed for sale"
+        );
+        require(
+            _existingCollection.getApproved(tokenId) == address(this) ||
+                _existingCollection.isApprovedForAll(
+                    _existingCollection.ownerOf(tokenId),
+                    address(this)
+                ),
             "You are not approved to buy this NFT"
         );
         require(msg.value >= _tokenPrice[tokenId], "Insufficient payment");
 
-        address seller = ownerOf(tokenId);
-        safeTransferFrom(seller, msg.sender, tokenId);
+        address seller = _existingCollection.ownerOf(tokenId);
+        _existingCollection.safeTransferFrom(
+            address(this),
+            msg.sender,
+            tokenId
+        );
         uint256 price = _tokenPrice[tokenId];
         _tokenPrice[tokenId] = 0; // Reset price after purchase
         payable(seller).transfer(price);
@@ -63,11 +78,20 @@ contract NFTMarketplace is ERC721, Ownable {
     }
 
     function getTokenPrice(uint256 tokenId) external view returns (uint256) {
-        require(_exists(tokenId), "Token does not exist");
         return _tokenPrice[tokenId];
     }
 
     function getExistingCollection() external view returns (address) {
-        return _existingCollection;
+        return address(_existingCollection);
+    }
+
+    // Implement the ERC721Receiver interface
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes calldata
+    ) external pure override returns (bytes4) {
+        return this.onERC721Received.selector;
     }
 }

@@ -66,11 +66,7 @@ contract NFTMarketplace is Ownable, IERC721Receiver, ERC721Holder {
         require(msg.value >= _tokenPrice[tokenId], "Insufficient payment");
 
         address seller = _existingCollection.ownerOf(tokenId);
-        _existingCollection.safeTransferFrom(
-            address(this),
-            msg.sender,
-            tokenId
-        );
+        _existingCollection.safeTransferFrom(seller, msg.sender, tokenId);
         uint256 price = _tokenPrice[tokenId];
         _tokenPrice[tokenId] = 0; // Reset price after purchase
         payable(seller).transfer(price);

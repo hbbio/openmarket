@@ -47,6 +47,11 @@ contract OpenMarket {
         _;
     }
 
+    modifier isOwner(uint256 _id, address _addr) {
+        require(_existingCollection.ownerOf(_id) == _addr, "Not the owner");
+        _;
+    }
+
     // FUNCTIONS
 
     function _setPrice(
@@ -67,26 +72,26 @@ contract OpenMarket {
     function setPrice(
         uint256 tokenId,
         uint256 price
-    ) external approved(tokenId) {
-        require(
-            _existingCollection.ownerOf(tokenId) == msg.sender,
-            "You are not the owner"
-        );
+    ) external approved(tokenId) isOwner(tokenId, msg.sender) {
         _setPrice(tokenId, price, msg.sender);
         emit NFTPriceUpdated(tokenId, msg.sender, price);
     }
 
-    function buyNFT(uint256 tokenId) external payable approved(tokenId) {
+    function buyNFT(
+        uint256 tokenId
+    )
+        external
+        payable
+        approved(tokenId)
+        isOwner(tokenId, _tokenSeller[tokenId])
+    {
         require(tokenPrice[tokenId] > 0, "NFT is not listed for sale");
-        require(
-            _existingCollection.ownerOf(tokenId) == _tokenSeller[tokenId],
-            "NFT ownership changed"
-        );
-        require(msg.value >= tokenPrice[tokenId], "Insufficient payment");
+        uint256 price = tokenPrice[tokenId];
+        require(msg.value >= price, "Insufficient payment");
 
         address seller = _existingCollection.ownerOf(tokenId);
         _existingCollection.safeTransferFrom(seller, msg.sender, tokenId);
-        uint256 price = tokenPrice[tokenId];
+
         _setPrice(tokenId, 0, address(0));
         payable(seller).transfer(price);
         emit NFTSold(tokenId, seller, msg.sender, price);

@@ -21,11 +21,11 @@ contract Azuki is ERC721A {
     }
 }
 
-contract User {
+contract User is ERC721A__IERC721Receiver {
     OpenMarket market;
     Azuki public coll;
 
-    constructor(OpenMarket _market, Azuki _coll) {
+    constructor(OpenMarket _market, Azuki _coll) payable {
         market = _market;
         coll = _coll;
     }
@@ -38,12 +38,31 @@ contract User {
         market.setPrice(_id, _price);
     }
 
-    function buy(uint256 _id) public {
-        market.buyNFT(_id);
+    function buy(uint256 _id) public payable {
+        market.buyNFT{value: msg.value}(_id);
     }
 
     function approveAll() public {
         coll.approveAll(address(market));
+    }
+
+    event ReceivedERC721(
+        address indexed operator,
+        address indexed from,
+        uint256 tokenId
+    );
+
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes calldata
+    ) external returns (bytes4) {
+        // Handle the received ERC721 token here (optional)
+        emit ReceivedERC721(operator, from, tokenId);
+
+        // Return the ERC721_RECEIVED selector to indicate the contract supports ERC721 token transfers
+        return this.onERC721Received.selector;
     }
 }
 
@@ -80,11 +99,13 @@ contract OpenMarketTest is DSTest {
     function testListAndBuy() public {
         OpenMarket con = new OpenMarket(address(coll));
         User user1 = new User(con, coll);
-        User user2 = new User(con, coll);
+        User user2 = new User{value: 2000}(con, coll);
         emit log_named_address("user1", address(user1));
         user1.mint();
+        user1.approveAll();
         user1.sell(0, 1000);
         assertEq(con.count(), 1);
-        user2.buy(0);
+        assertEq(address(user2).balance, 2000);
+        user2.buy{value: 1000}(0);
     }
 }

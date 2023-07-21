@@ -21,3 +21,10 @@ We can kill two birds with one stone:
 ## Properties
 
 - No admin key and no governance
+
+## Roadmap
+
+- Test factory
+- Collection transfer fees
+- Use Oracle to get the address of the deployer of a contract
+- Sign on another chain, `buyWithSignature`

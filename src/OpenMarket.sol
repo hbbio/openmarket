@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 // is Ownable?
 contract NFTMarketplace {
+    uint256 public count;
     mapping(uint256 => uint256) public tokenPrice;
     mapping(uint256 => address) private _tokenSeller;
     IERC721Enumerable private _existingCollection;
@@ -40,14 +41,28 @@ contract NFTMarketplace {
     //     emit NFTListed(tokenId, price);
     // }
 
+    function _setPrice(
+        uint256 tokenId,
+        uint256 price,
+        address seller
+    ) internal {
+        if (tokenPrice[tokenId] == 0 && price > 0) {
+            count++;
+        }
+        if (tokenPrice[tokenId] > 0 && price == 0) {
+            count--;
+        }
+        tokenPrice[tokenId] = price;
+        _tokenSeller[tokenId] = seller;
+    }
+
     function setPrice(uint256 tokenId, uint256 price) external {
         // require(_tokenPrice[tokenId] > 0, "NFT is not listed for sale");
         require(
             _existingCollection.ownerOf(tokenId) == msg.sender,
             "You are not the owner"
         );
-        tokenPrice[tokenId] = price;
-        _tokenSeller[tokenId] = msg.sender;
+        _setPrice(tokenId, price, msg.sender);
         emit NFTPriceUpdated(tokenId, msg.sender, price);
     }
 
@@ -70,8 +85,7 @@ contract NFTMarketplace {
         address seller = _existingCollection.ownerOf(tokenId);
         _existingCollection.safeTransferFrom(seller, msg.sender, tokenId);
         uint256 price = tokenPrice[tokenId];
-        tokenPrice[tokenId] = 0; // Reset price after purchase
-        _tokenSeller[tokenId] = address(0);
+        _setPrice(tokenId, 0, address(0));
         payable(seller).transfer(price);
         emit NFTSold(tokenId, seller, msg.sender, price);
     }
@@ -82,5 +96,22 @@ contract NFTMarketplace {
 
     function getExistingCollection() external view returns (address) {
         return address(_existingCollection);
+    }
+
+    function getTokensOnSale() external view returns (bytes memory) {
+        uint256[] memory tokenIds = new uint256[](count);
+        uint256[] memory prices = new uint256[](count);
+        uint256 supply = _existingCollection.totalSupply();
+        uint256 pos = 0;
+        for (uint256 i = 0; i < supply; i++) {
+            if (tokenPrice[i] > 0) {
+                tokenIds[pos] = i;
+                prices[pos] = tokenPrice[i];
+                pos++;
+            }
+        }
+        // Encode the tokenIds and prices into a JSON format
+        bytes memory jsonData = abi.encode(tokenIds, prices);
+        return jsonData;
     }
 }

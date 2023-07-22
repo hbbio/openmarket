@@ -35,7 +35,6 @@ contract OpenMarket {
 
     constructor(address existingCollection) {
         _existingCollection = IERC721Enumerable(existingCollection);
-        recipient = existingCollection;
     }
 
     // MODIFIERS

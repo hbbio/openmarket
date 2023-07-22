@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 // is Ownable?
 contract OpenMarket {
+    address public collection;
     uint256 public count;
     mapping(uint256 => uint256) public tokenPrice;
     mapping(uint256 => address) private _tokenSeller;
@@ -34,6 +35,7 @@ contract OpenMarket {
     );
 
     constructor(address existingCollection) {
+        collection = existingCollection;
         _existingCollection = IERC721Enumerable(existingCollection);
     }
 

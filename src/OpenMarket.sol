@@ -1,14 +1,16 @@
 // SPDX-License-Identifier: GPL
 pragma solidity 0.8.19;
 
-// import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-// is Ownable?
+/**
+ * @title OpenMarket is a public good onchain NFT marketplace.
+ * @author Henri Binsztok
+ * @notice This contract would usually be deployed by the OpenMarketsFactory.
+ */
 contract OpenMarket {
-    address public collection;
     uint256 public count;
     mapping(uint256 => uint256) public tokenPrice;
     mapping(uint256 => address) private _tokenSeller;
@@ -21,12 +23,28 @@ contract OpenMarket {
     // enable .toString()
     using Strings for uint256;
 
-    event NFTListed(uint256 indexed tokenId, uint256 price);
+    /**
+     * @dev NFTPriceUpdated is emitted when a seller updates the price of a token.
+     * If the price is 0, the token is retired from sale.
+     * @param tokenId token ID
+     * @param seller address of seller
+     * @param price new price
+     */
     event NFTPriceUpdated(
         uint256 indexed tokenId,
         address seller,
         uint256 price
     );
+
+    /**
+     * @dev NFTSold is emitted when a sale happens. We didn't use Transfer
+     * as many frontends do not interpret these events properly as they
+     * differ in semantics from equivalent ERC20 token transfers.
+     * @param tokenId token ID
+     * @param seller address of seller
+     * @param buyer address of buyer
+     * @param price of sale
+     */
     event NFTSold(
         uint256 indexed tokenId,
         address indexed seller,
@@ -35,13 +53,16 @@ contract OpenMarket {
     );
 
     constructor(address existingCollection) {
-        collection = existingCollection;
         _existingCollection = IERC721Enumerable(existingCollection);
     }
 
     // MODIFIERS
 
-    modifier approved(uint256 _id) {
+    /**
+     * @dev approved requires the token to be approved for sale.
+     * @param _id token ID.
+     */
+    modifier isApproved(uint256 _id) {
         require(
             _existingCollection.getApproved(_id) == address(this) ||
                 _existingCollection.isApprovedForAll(
@@ -53,6 +74,11 @@ contract OpenMarket {
         _;
     }
 
+    /**
+     * @dev isOwner requires the given address to own the token.
+     * @param _id token ID
+     * @param _addr owner address
+     */
     modifier isOwner(uint256 _id, address _addr) {
         require(_existingCollection.ownerOf(_id) == _addr, "Not the owner");
         _;
@@ -60,9 +86,21 @@ contract OpenMarket {
 
     // FUNCTIONS
 
-    // @todo use ChainLink Functions
-    function _setFees() public {}
+    /**
+     * @dev setFees updates the collection fee, and the recipient of these fees.
+     * We should use ChainLink functions to make sure that only the deployer of the
+     * NFT collection is able to set the fees.
+     * @param uint8 fee in percentage points, e.g. 100 is 1% fee. Max fee is 2.56%.
+     * @param recipient Address of the fee recipient.
+     */
+    // function setFees(uint8 fee, address recipient) public {}
 
+    /**
+     * @dev _setPrice is an internal function that changes an order price.
+     * @param tokenId ID of the token to sell.
+     * @param price The price at which a sale can be agreed on.
+     * @param seller Address of the seller.
+     */
     function _setPrice(
         uint256 tokenId,
         uint256 price,
@@ -78,20 +116,29 @@ contract OpenMarket {
         _tokenSeller[tokenId] = seller;
     }
 
+    /**
+     * @dev _setPrice changes an order price.
+     * @param tokenId ID of the token to sell.
+     * @param price The price at which a sale can be agreed on.
+     */
     function setPrice(
         uint256 tokenId,
         uint256 price
-    ) external approved(tokenId) isOwner(tokenId, msg.sender) {
+    ) external isApproved(tokenId) isOwner(tokenId, msg.sender) {
         _setPrice(tokenId, price, msg.sender);
         emit NFTPriceUpdated(tokenId, msg.sender, price);
     }
 
+    /**
+     * @dev buyNFT buys an NFT.
+     * @param tokenId ID of the token to buy.
+     */
     function buyNFT(
         uint256 tokenId
     )
         external
         payable
-        approved(tokenId)
+        isApproved(tokenId)
         isOwner(tokenId, _tokenSeller[tokenId])
     {
         require(tokenPrice[tokenId] > 0, "NFT is not listed for sale");
@@ -111,14 +158,25 @@ contract OpenMarket {
         emit NFTSold(tokenId, seller, msg.sender, price);
     }
 
+    /**
+     * @dev getTokenPrice returns the current token price sale.
+     * @param tokenId ID of the token.
+     */
     function getTokenPrice(uint256 tokenId) external view returns (uint256) {
         return tokenPrice[tokenId];
     }
 
-    function getExistingCollection() external view returns (address) {
+    /**
+     * @dev getCollection returns the address of the collection.
+     */
+    function getCollection() external view returns (address) {
         return address(_existingCollection);
     }
 
+    /**
+     * @dev getTokensOnSale generates a string containing all orders and their price
+     * in a single call.
+     */
     function getTokensOnSale() external view returns (string memory) {
         uint256 supply = _existingCollection.totalSupply();
         string memory text = "[";

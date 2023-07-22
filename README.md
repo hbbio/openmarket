@@ -16,15 +16,15 @@ We can kill two birds with one stone:
 ## Goals
 
 - Sell NFT: less than 100k gas **done**
-- Buy NFT: less than 100k gas **done**
+- Buy NFT: less than 100k gas (without fees, 103k with fees) **done**
 
 ## Properties
 
-- No admin key and no governance
+- Immutable: No admin key and no governance
 
 ## Roadmap
 
-- Test factory
-- Collection transfer fees
+- Test factory **done**
+- Collection transfer fees _prototype_
 - Use Oracle to get the address of the deployer of a contract
 - Sign on another chain, `buyWithSignature`

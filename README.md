@@ -10,7 +10,7 @@ beg for API keys like it's web 2.0.
 We can kill two birds with one stone:
 
 - Online marketplace
-- Public good: No marketplace fee ever, no admins.
+- Public good: No marketplace fee ever, no admins, immutable contracts.
 - Fully onchain orderbook
 
 ## Goals

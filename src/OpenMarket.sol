@@ -13,6 +13,10 @@ contract OpenMarket {
     mapping(uint256 => address) private _tokenSeller;
     IERC721Enumerable private _existingCollection;
 
+    // fee and recipient must _both_ be set for fees to be in effect
+    uint8 public fee = 0;
+    address public recipient;
+
     // enable .toString()
     using Strings for uint256;
 
@@ -31,6 +35,7 @@ contract OpenMarket {
 
     constructor(address existingCollection) {
         _existingCollection = IERC721Enumerable(existingCollection);
+        recipient = existingCollection;
     }
 
     // MODIFIERS
@@ -53,6 +58,9 @@ contract OpenMarket {
     }
 
     // FUNCTIONS
+
+    // @todo use ChainLink Functions
+    function _setFees() public {}
 
     function _setPrice(
         uint256 tokenId,
@@ -93,7 +101,12 @@ contract OpenMarket {
         _existingCollection.safeTransferFrom(seller, msg.sender, tokenId);
 
         _setPrice(tokenId, 0, address(0));
-        payable(seller).transfer(price);
+        if (fee > 0) {
+            payable(seller).transfer((price * (256 - fee)) / 256);
+            payable(recipient).transfer((price * fee) / 256);
+        } else {
+            payable(seller).transfer(price);
+        }
         emit NFTSold(tokenId, seller, msg.sender, price);
     }
 

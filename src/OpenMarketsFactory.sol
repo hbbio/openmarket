@@ -6,7 +6,7 @@ pragma solidity 0.8.19;
 import "./OpenMarket.sol";
 
 // is Ownable
-contract NFTMarketplaceFactory {
+contract OpenMarketsFactory {
     mapping(address => address) private _collectionToMarketplace;
     address[] private _marketplaces;
 

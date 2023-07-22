@@ -15,8 +15,16 @@ contract OpenMarketsFactory {
         address indexed marketplace
     );
 
+    function isNFT(address _collection) public view returns (bool) {
+        (bool success, ) = _collection.staticcall(
+            abi.encodeWithSignature("tokenURI(uint256)", 0)
+        );
+        return success;
+    }
+
     // @todo onlyOwner?
     function createMarketplace(address collection) external {
+        // require(isNFT(collection));
         require(collection != address(0), "Invalid collection address");
         require(
             _collectionToMarketplace[collection] == address(0),

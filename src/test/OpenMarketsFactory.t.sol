@@ -18,6 +18,7 @@ contract OpenMarketsFactoryTest is DSTest {
     function setUp() public {
         fact = new OpenMarketsFactory();
         coll = new Azuki();
+        coll.mint(10);
         emit log_named_address("sender", msg.sender);
     }
 

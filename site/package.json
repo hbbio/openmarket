@@ -1,0 +1,16 @@
+{
+  "name": "openmarket-site",
+  "version": "1.0.0",
+  "description": "OpenMarket demo website",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite dev",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ida Swarczewskaja",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.3.3",
+    "vite": "^4.4.6"
+  }
+}

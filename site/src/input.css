@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  h1 {
+    @apply text-5xl text-gray-900 font-bold mb-6;
+  }
+  h2 {
+    @apply text-4xl text-gray-900 mb-3;
+  }
+  h3 {
+    @apply text-2xl text-gray-900 mb-3;
+  }
+  p {
+    @apply text-base text-gray-900 mb-3;
+  }
+}

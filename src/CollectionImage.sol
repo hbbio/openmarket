@@ -4,6 +4,7 @@ pragma solidity 0.8.19;
 
 import "@erc721a/contracts/ERC721A.sol";
 
+import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
@@ -135,10 +136,12 @@ contract CollectionImageCopy is ERC721A, Ownable {
                 '"}]}'
             )
         );
-        // // Concatenate the baseTokenURI with the token-specific JSON metadata
-        // string memory tokenUri = string(
-        //     abi.encodePacked(tokenId.toString(), ".json")
-        // );
-        return json;
+        return
+            string(
+                abi.encodePacked(
+                    "data:application/json;base64,",
+                    Base64.encode(bytes(json))
+                )
+            );
     }
 }

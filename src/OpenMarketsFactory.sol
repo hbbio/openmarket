@@ -17,7 +17,8 @@ contract OpenMarketsFactory {
 
     function isNFT(address _collection) public view returns (bool) {
         (bool success, ) = _collection.staticcall(
-            abi.encodeWithSignature("tokenURI(uint256)", 0)
+            // abi.encodeWithSignature("tokenURI(uint256)", 0)
+            abi.encodeWithSignature("totalSupply()")
         );
         return success;
     }

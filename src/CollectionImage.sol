@@ -9,21 +9,12 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 /**
- * @title NFT Sale with bulk mint discount
- * @notice NFT, Sale, ERC721, ERC721A
- * @custom:version 1.0.9
- * @custom:address 15
- * @custom:default-precision 0
- * @custom:simple-description An NFT with a built in sale that provides bulk minting discounts.
- * When minting multiple NFTs, gas costs are reduced compared to a normal NFT contract.
- * @dev ERC721A NFT with the following features:
+ * @title Sample NFT collection for tests.
+ * @dev A collection copy-mint for dev tests, that generates the tokenURI
+ * onchain, but is using an external (IPFS or HTTPS) URL for images.
  *
- *  - Built-in sale with an adjustable price.
- *  - Reserve function for the owner to mint free NFTs.
- *  - Fixed maximum supply.
- *  - Reduced Gas costs when minting many NFTs at the same time.
+ * We should add a description field in the constructor.
  */
-
 contract CollectionImageCopy is ERC721A, Ownable {
     using Strings for uint256;
 

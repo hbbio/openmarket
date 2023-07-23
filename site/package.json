@@ -5,7 +5,7 @@
   "main": "index.html",
   "scripts": {
     "dev": "vite dev",
-    "build": "npx tailwindcss -i ./src/input.css -o ./dist/output.css && vite build",
+    "build": "npx tailwindcss -i ./src/input.css -o ./dist/output.css --minify && vite build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ida Swarczewskaja",

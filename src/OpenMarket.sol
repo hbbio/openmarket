@@ -87,6 +87,23 @@ contract OpenMarket {
     // FUNCTIONS
 
     /**
+     * @dev getOwner retrieves the owner of an ownable collection, or returns
+     * the null address otherwise.
+     * @param _collection address of the collection
+     */
+    function getOwner(address _collection) private view returns (address) {
+        (bool success, bytes memory result) = _collection.staticcall(
+            abi.encodeWithSignature("owner()")
+        );
+        if (success) {
+            address owner = abi.decode(result, (address));
+            return owner;
+        } else {
+            return address(0);
+        }
+    }
+
+    /**
      * @dev setFees updates the collection fee, and the recipient of these fees.
      * We should use ChainLink functions to make sure that only the deployer of the
      * NFT collection is able to set the fees.

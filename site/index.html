@@ -24,6 +24,7 @@
         </p>
         <a
           href="https://github.com/hbbio/openmarket"
+          target="_blank"
           class="py-3 px-4 rounded-md bg-cyan-600 text-white"
           >View on Github</a
         >
@@ -100,29 +101,41 @@
     </section>
     <section class="relative text-left max-w-screen-lg mx-auto py-12">
       <h1>Demo</h1>
-      <p class="text-lg">This demo represents two trading sides:</p>
-      <ol class="list-decimal text-lg mb-3 pl-6">
-        <li>a seller, who wants to sell his NFT and</li>
-        <li>
-          a buyer, who can buy any NFT from a single collection that are
-          currently on sale.
-        </li>
-      </ol>
+
       <p class="text-lg">
         This demo uses images forked from the
         <a href="https://nouns.wtf/" target="_blank">Nouns DAO NFT collection</a
         >.
       </p>
+      <p class="text-lg">
+        OpenMarket smart contracts are deployed on <b>Linea Goerli</b> testnet.
+        The Nouns OpenMarket smart contract address on Linea Goerli:
+        <a
+          href="https://goerli.lineascan.build/address/0xfb27451439336cf06b719a6117bf492d245a920a"
+          target="_blank"
+        >
+          0xfB27451439336cf06B719a6117BF492D245a920a</a
+        >
+      </p>
+      <p class="text-lg">This demo represents two trading sides:</p>
+      <ol class="list-decimal text-lg mb-3 pl-6">
+        <li>A seller, who wants to sell his NFT and</li>
+        <li>
+          A buyer, who can buy any NFT from a single collection that are
+          currently on sale.
+        </li>
+      </ol>
     </section>
     <section class="relative text-left max-w-screen-lg mx-auto py-12">
       <div class="flex space-x-8">
         <div>
           <h2>Sell NFT</h2>
           <p class="text-lg mb-6">
-            As an NFT owner, you can put on sale the NFT that you possess from a
-            given collection. In case if you possess multiple NFTs you can
-            choose which you'd like to sell.
+            As an NFT owner, you can <b>put on sale</b> the NFT that you possess
+            from a given collection. In case if you possess multiple NFTs you
+            can choose which you'd like to sell.
           </p>
+          <p></p>
         </div>
         <div class="w-[500px]">
           <iframe
@@ -139,8 +152,12 @@
         <div>
           <h2>Buy an NFT</h2>
           <p class="text-lg mb-6">
-            As a buyer, you can view the NFT asset(s) that are available on sale
-            and buy a chosen one from the interface below.
+            As a buyer, you can view the NFT asset(s) of a particular collection
+            that are available on sale, and <b>buy</b> an NFT of your choice.
+          </p>
+          <p>
+            The smart contract address:
+            <span class="text-cyan-600"></span>
           </p>
         </div>
         <div class="w-[500px]">
@@ -153,8 +170,27 @@
         </div>
       </div>
     </section>
+    <section class="relative text-left max-w-screen-lg mx-auto py-12">
+      <h1>Roadmap</h1>
+      <p class="text-lg">
+        OpenMarket is already more gas efficient than common marketplaces due to
+        its simplicity for buying assets: <b>Less than 100k gas!</b>
+      </p>
+      <ol class="list-decimal text-lg mb-3 pl-6">
+        <li>
+          We plan to add the ability to <b>register orders on L2 chains</b>, to
+          buy items for collections on mainnet, reducing the listing fees in the
+          future.
+        </li>
+        <li>
+          We also plan to add a way to retrieve collection metadata from
+          <a href="https://ipfs.io/" target="_blank">IPFS</a>, to enable users
+          <b>search by traits</b>, etc.
+        </li>
+      </ol>
+    </section>
     <footer
-      class="w-full bg-gradient-to-r from-sky-100 via-emerald-100 to-purple-100 p-4 text-center"
+      class="mt-6 w-full bg-gradient-to-r from-sky-100 via-emerald-100 to-purple-100 p-4 text-center"
     >
       <p>Built at ETHGlobal Paris 💙🤍❤️</p>
       <p>Image courtesy: Nouns DAO</p>

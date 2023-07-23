@@ -160,7 +160,7 @@ contract OpenMarket {
     {
         require(tokenPrice[tokenId] > 0, "NFT is not listed for sale");
         uint256 price = tokenPrice[tokenId];
-        require(msg.value >= price, "Insufficient payment");
+        require(msg.value == price, "Wrong amount");
 
         address seller = _tokenSeller[tokenId];
         _existingCollection.safeTransferFrom(seller, msg.sender, tokenId);

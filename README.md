@@ -1,7 +1,13 @@
 # OpenMarket
 
-A public good marketplace contracts with full onchain data to trade NFTs without
+A public good market contracts with full onchain data to trade NFTs without
 platform fees nor API key.
+
+**Disclaimer**: These contracts are not audited yet, use them at your own risk.
+Since they are public goods, please contact
+[tweetfr](https://twitter.com/tweetfr) or
+[henri\_\_ok](https://twitter.com/henri__ok) if you want to provide an audit for
+them.
 
 ## Why
 
@@ -44,5 +50,6 @@ so on.
 
 - Test factory **done**
 - Collection transfer fees _prototype_ **done**
+- Fees setting for collection "owner"
 - Use Oracle to get the address of the deployer of a contract
 - Sign on another chain, `buyWithSignature`
